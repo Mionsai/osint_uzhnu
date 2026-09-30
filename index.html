@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Навчальні матеріали</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Rubik:wght@400;500&display=swap" rel="stylesheet">
+<script>
+  try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch {}
+</script>
+<style>
+  /* Світла тема */
+  :root {
+    color-scheme: light;
+    --paper: #fbfcfe; --grid: #e3eaf4; --card: #ffffff; --ink: #1d3f8f; --on-ink: #ffffff;
+    --text: #1c2433; --muted: #5b6678; --margin: #e05a5a; --ok: #1f7a4d; --line: #d4dcea;
+  }
+  /* Темна тема: вмикається сама, якщо в системі темна, або кнопкою */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --paper: #10141c; --grid: #1a2130; --card: #171d29; --ink: #8fb0ff; --on-ink: #0d1322;
+      --text: #e3e8f2; --muted: #98a3b6; --margin: #ef7676; --ok: #4cc38a; --line: #2b3548;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --paper: #10141c; --grid: #1a2130; --card: #171d29; --ink: #8fb0ff; --on-ink: #0d1322;
+    --text: #e3e8f2; --muted: #98a3b6; --margin: #ef7676; --ok: #4cc38a; --line: #2b3548;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; color: var(--text);
+    font: 16px/1.6 "Rubik", system-ui, sans-serif;
+    background-color: var(--paper);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+  header, main { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+  header { padding-top: 28px; }
+  .site-title { font: 700 1.5rem/1.2 "Unbounded", sans-serif; color: var(--ink); margin: 0 0 14px; }
+  nav { display: flex; gap: 6px; flex-wrap: wrap; }
+  nav button { color: var(--ink); font-weight: 400; padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); }
+  nav button.active { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
+  .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  #themeBtn { background: var(--card); color: var(--ink); border-color: var(--line); padding: 6px 12px; font-weight: 400; border-radius: 999px; }
+  main { margin-top: 28px; margin-bottom: 40px; border-left: 2px solid var(--margin); padding-left: 22px; min-height: 50vh; }
+  h1 { font: 700 1.3rem/1.3 "Unbounded", sans-serif; margin: 0 0 18px; }
+  h2 { font: 500 1.05rem/1.35 "Unbounded", sans-serif; margin: 0 0 6px; }
+  .item { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 16px 18px; margin-bottom: 14px; }
+  .body { white-space: pre-wrap; }
+  .note { color: var(--muted); }
+  .note.err { color: var(--margin); }
+  .note.ok { color: var(--ok); }
+  a { color: var(--ink); }
+  form { display: grid; gap: 12px; margin-top: 12px; }
+  label { display: grid; gap: 4px; font-size: .92rem; color: var(--muted); }
+  input, textarea { font: inherit; color: var(--text); padding: 9px 11px; border: 1px solid var(--line); border-radius: 4px; background: var(--card); width: 100%; }
+  textarea { resize: vertical; }
+  button { font: inherit; font-weight: 500; cursor: pointer; padding: 8px 16px; border-radius: 4px; border: 1px solid var(--ink); background: var(--ink); color: var(--on-ink); justify-self: start; }
+  button:disabled { opacity: .6; cursor: wait; }
+  :focus-visible { outline: 3px solid #8fb0ff; outline-offset: 2px; }
+  .item.solved { border-color: var(--ok); box-shadow: inset 4px 0 0 var(--ok); }
+  .badge { display: inline-block; font-size: .8rem; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); margin-bottom: 8px; }
+  .item.solved .badge { color: var(--ok); border-color: var(--ok); }
+  .clickable { cursor: pointer; transition: border-color .15s; }
+  .clickable:hover { border-color: var(--ink); }
+  .preview { color: var(--muted); margin: 0 0 6px; }
+  .more { color: var(--ink); font-size: .9rem; }
+  .back { background: transparent; color: var(--ink); border-color: var(--line); font-weight: 400; margin-bottom: 14px; }
+  .page h1 { margin-bottom: 12px; }
+  .pic { display: block; margin: 14px 0; }
+  .pic img { display: block; max-width: 100%; height: auto; border-radius: 4px; border: 1px solid var(--line); }
+  .links { padding-left: 20px; margin: 14px 0 0; }
+  .links li { margin: 4px 0; }
+  .form-title { margin: 22px 0 0; padding-top: 16px; border-top: 1px solid var(--line); }
+  @media (max-width: 560px) { main { padding-left: 14px; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <p class="site-title">Навчальні матеріали</p>
+    <button type="button" id="themeBtn" aria-label="Змінити тему"></button>
+  </div>
+  <nav>
+    <button type="button" data-view="materials">Матеріали</button>
+    <button type="button" data-view="tasks">Завдання</button>
+  </nav>
+</header>
+<main id="app"></main>
+
+<script>
+// =====================================================================
+//  КОНТЕНТ — редагуй тут
+//  Щоб додати новий запис: скопіюй блок { ... }, встав вище/нижче,
+//  не забудь кому після }. Текст пиши між `зворотними лапками` —
+//  так можна робити кілька рядків.
+// =====================================================================
+
+// Посилання на Google Apps Script (див. інструкцію)
+const SHEET_URL = 'https://script.google.com/macros/s/ВСТАВ_СВІЙ_ID/exec';
+
+// Кожен матеріал відкривається на окремій сторінці: .../#m/<id>
+// Шаблон — скопіюй між [ ], прибери // на початку рядків.
+// Необов'язкові поля (images, links) можна просто не писати.
+//
+//  {
+//    id: 'docker-intro',
+//    title: 'Вступ до Docker',
+//    text: `Повний текст матеріалу.
+//  Можна кілька рядків.`,
+//    images: ['img/docker-schema.png', 'img/docker-2.png'],
+//    links: [
+//      { title: 'Документація Docker', url: 'https://docs.docker.com/' },
+//      { title: 'Презентація', url: 'https://...' },
+//    ],
+//  },
+const MATERIALS = [
+
+];
+
+// Кожне завдання відкривається на окремій сторінці: .../#t/<id>
+// Шаблон (поля images, links, hash — необов'язкові):
+//
+//  {
+//    id: 'lab1',
+//    title: 'Лабораторна 1',
+//    text: `Умова завдання.`,
+//    images: ['img/lab1.png'],
+//    links: [{ title: 'Файл для завдання', url: 'files/lab1.zip' }],
+//    hash: 'хеш_правильної_відповіді',
+//  },
+//
+// hash є    → відповідь перевіряється автоматично, студент одразу бачить результат.
+// hash нема → відповідь просто приходить тобі в таблицю, перевіряєш сам.
+// Хеш:  echo -n 'FLAG{відповідь}' | sha256sum
+// Кілька правильних варіантів:  hash: ['хеш1', 'хеш2'],
+const TASKS = [
+
+];
+
+// =====================================================================
+//  Далі код сайту — чіпати не обов'язково
+// =====================================================================
+
+const app = document.getElementById('app');
+
+function h(tag, props = {}, ...kids) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})) {
+    if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else if (k === 'class') el.className = v;
+    else if (k === 'value') el.value = v;
+    else if (v !== false && v != null) el.setAttribute(k, v);
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) el.append(c instanceof Node ? c : String(c));
+  return el;
+}
+const mount = (...n) => app.replaceChildren(...n.flat());
+const note = (t, k = '') => h('p', { class: 'note ' + k }, t);
+
+function savedName(v) {
+  try { if (v !== undefined) localStorage.setItem('studentName', v); return localStorage.getItem('studentName') || ''; }
+  catch { return ''; }
+}
+
+// Список: тільки назви + короткий уривок, клік відкриває окрему сторінку
+function viewMaterials() {
+  mount(h('h1', {}, 'Матеріали'),
+    MATERIALS.length ? MATERIALS.map(m => {
+      const preview = (m.text || '').split('\n')[0];
+      return h('article', {
+        class: 'item clickable', tabindex: 0, role: 'button',
+        onclick: () => go('m/' + m.id),
+        onkeydown: e => { if (e.key === 'Enter') go('m/' + m.id); }
+      },
+        h('h2', {}, m.title),
+        preview && h('p', { class: 'preview' }, preview.length > 140 ? preview.slice(0, 140) + '…' : preview),
+        h('span', { class: 'more' }, 'Читати →'));
+    }) : note('Матеріалів ще немає.'));
+}
+
+// Фото і посилання (спільне для матеріалів і завдань)
+function extras(x) {
+  const out = [];
+  for (const src of x.images || []) {
+    out.push(h('a', { href: src, target: '_blank', rel: 'noopener', class: 'pic' },
+      h('img', { src, alt: x.title, loading: 'lazy' })));
+  }
+  const links = [...(x.links || [])];
+  if (x.link) links.push({ title: 'Відкрити посилання', url: x.link });   // старий формат теж працює
+  if (links.length) {
+    out.push(h('ul', { class: 'links' }, links.map(l =>
+      h('li', {}, h('a', { href: l.url, target: '_blank', rel: 'noopener' }, l.title || l.url)))));
+  }
+  return out;
+}
+
+// Окрема сторінка одного матеріалу
+function viewMaterial(id) {
+  const m = MATERIALS.find(x => x.id === id);
+  const back = h('button', { type: 'button', class: 'back', onclick: () => go('materials') }, '← Усі матеріали');
+  if (!m) return mount(back, note('Такого матеріалу немає.', 'err'));
+  mount(back, h('article', { class: 'item page' },
+    h('h1', {}, m.title),
+    m.text && h('div', { class: 'body' }, m.text),
+    extras(m)
+  ));
+}
+
+// Список завдань: назва + уривок, клік відкриває окрему сторінку
+function viewTasks() {
+  const solved = solvedList();
+  mount(h('h1', {}, 'Завдання'),
+    TASKS.length ? TASKS.map(t => {
+      const done = t.hash && solved.includes(t.id);
+      const preview = (t.text || '').split('\n')[0];
+      return h('article', {
+        class: 'item clickable' + (done ? ' solved' : ''), tabindex: 0, role: 'button',
+        onclick: () => go('t/' + t.id),
+        onkeydown: e => { if (e.key === 'Enter') go('t/' + t.id); }
+      },
+        t.hash && h('span', { class: 'badge' }, done ? "Розв'язано" : 'Прапор'),
+        h('h2', {}, t.title),
+        preview && h('p', { class: 'preview' }, preview.length > 140 ? preview.slice(0, 140) + '…' : preview),
+        h('span', { class: 'more' }, 'Відкрити →'));
+    }) : note('Завдань ще немає.'));
+}
+
+// Окрема сторінка завдання з формою
+function viewTask(id) {
+  const t = TASKS.find(x => x.id === id);
+  const back = h('button', { type: 'button', class: 'back', onclick: () => go('tasks') }, '← Усі завдання');
+  mount(back, t ? taskCard(t) : note('Такого завдання немає.', 'err'));
+}
+
+// SHA-256 в браузері (як у CTF-сайті)
+async function sha256(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Які завдання цей студент уже розв'язав (тільки в його браузері)
+function solvedList(add) {
+  try {
+    const list = JSON.parse(localStorage.getItem('solved') || '[]');
+    if (add && !list.includes(add)) { list.push(add); localStorage.setItem('solved', JSON.stringify(list)); }
+    return list;
+  } catch { return []; }
+}
+
+function sendToSheet(data) {
+  return fetch(SHEET_URL, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(data) });
+}
+
+function taskCard(t) {
+  const isFlag = !!t.hash;
+  const name = h('input', { required: true, minlength: 2, maxlength: 80, placeholder: "Прізвище та ім'я", value: savedName() });
+  const answer = isFlag
+    ? h('input', { required: true, maxlength: 200, placeholder: 'FLAG{...}', autocomplete: 'off' })
+    : h('textarea', { required: true, rows: 4, maxlength: 5000, placeholder: 'Відповідь або ключ рішення' });
+  const btn = h('button', { type: 'submit' }, isFlag ? 'Перевірити прапор' : 'Надіслати відповідь');
+  const status = note('');
+  const badge = isFlag ? h('span', { class: 'badge' }) : null;
+  const card = h('article', { class: 'item page' });
+
+  function markSolved(on) {
+    if (!isFlag) return;
+    card.classList.toggle('solved', on);
+    badge.textContent = on ? 'Розв\'язано' : 'Прапор';
+  }
+  markSolved(solvedList().includes(t.id));
+
+  const form = h('form', {
+    onsubmit: async e => {
+      e.preventDefault();
+      const value = answer.value.trim();
+      const who = name.value.trim();
+      btn.disabled = true; status.className = 'note'; status.textContent = isFlag ? 'Перевіряю…' : 'Надсилаю…';
+
+      let correct = '';
+      if (isFlag) correct = [].concat(t.hash).includes(await sha256(value)) ? 'так' : 'ні';
+
+      try {
+        await sendToSheet({ task: t.id + ' — ' + t.title, name: who, answer: value, correct });
+        savedName(who);
+        answer.value = '';
+        if (!isFlag) {
+          status.className = 'note ok'; status.textContent = 'Відповідь надіслано.';
+        } else if (correct === 'так') {
+          solvedList(t.id); markSolved(true);
+          status.className = 'note ok'; status.textContent = 'Правильно! Результат записано.';
+        } else {
+          status.className = 'note err'; status.textContent = 'Невірний прапор. Спробуй ще.';
+        }
+      } catch {
+        status.className = 'note err'; status.textContent = 'Не надіслано: перевірте інтернет і спробуйте ще раз.';
+      }
+      btn.disabled = false;
+    }
+  }, h('label', {}, "Ваше ім'я", name), h('label', {}, isFlag ? 'Прапор' : 'Відповідь', answer), btn, status);
+
+  card.append(...[
+    badge,
+    h('h1', {}, t.title),
+    t.text && h('div', { class: 'body' }, t.text),
+    ...extras(t),
+    h('h2', { class: 'form-title' }, isFlag ? 'Здати прапор' : 'Здати відповідь'),
+    form
+  ].filter(Boolean));
+  return card;
+}
+
+function current() { return decodeURIComponent(location.hash.slice(1)) || 'materials'; }
+
+function show(r) {
+  const tab = r.startsWith('m/') ? 'materials' : r.startsWith('t/') ? 'tasks' : r;
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.view === tab));
+  if (r === 'tasks') viewTasks();
+  else if (r.startsWith('t/')) viewTask(r.slice(2));
+  else if (r.startsWith('m/')) viewMaterial(r.slice(2));
+  else viewMaterials();
+  window.scrollTo(0, 0);
+}
+
+// Перехід зі збереженням історії (щоб працювала кнопка «назад» у браузері)
+function go(r) {
+  try { history.pushState(null, '', '#' + r); } catch {}
+  show(r);
+}
+
+// Перемикач теми: запам'ятовується в браузері
+const themeBtn = document.getElementById('themeBtn');
+function isDark() {
+  const t = document.documentElement.dataset.theme;
+  return t ? t === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+}
+function paintThemeBtn() { themeBtn.textContent = isDark() ? '☀ Світла' : '🌙 Темна'; }
+themeBtn.addEventListener('click', () => {
+  const next = isDark() ? 'light' : 'dark';
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem('theme', next); } catch {}
+  paintThemeBtn();
+});
+paintThemeBtn();
+
+// Клік по вкладці
+document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', () => go(b.dataset.view)));
+
+// Кнопка «назад» у браузері та прямі посилання типу .../#tasks або .../#m/docker-intro
+window.addEventListener('popstate', () => show(current()));
+window.addEventListener('hashchange', () => show(current()));
+show(current());
+</script>
+</body>
+</html>
