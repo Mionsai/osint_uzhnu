@@ -103,7 +103,7 @@
 // =====================================================================
 
 // Посилання на Google Apps Script (див. інструкцію)
-const SHEET_URL = 'https://script.google.com/macros/s/ВСТАВ_СВІЙ_ID/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzzsemNDcWOa7yROjC1wXTFiK2wyY0Z5RxXeEijAH3aN38CW23PmegrkF-gpZGsnR2H/exec';
 
 // Кожен матеріал відкривається на окремій сторінці: .../#m/<id>
 // Шаблон — скопіюй між [ ], прибери // на початку рядків.
@@ -559,20 +559,22 @@ function taskCard(t) {
       let correct = '';
       if (isFlag) correct = [].concat(t.hash).includes(await sha256(value)) ? 'так' : 'ні';
 
+      savedName(who);
+      answer.value = '';
+
+      if (!isFlag) {
+        status.className = 'note ok'; status.textContent = 'Відповідь прийнято.';
+      } else if (correct === 'так') {
+        solvedList(t.id); markSolved(true);
+        status.className = 'note ok'; status.textContent = 'Правильно!';
+      } else {
+        status.className = 'note err'; status.textContent = 'Невірний прапор. Спробуй ще.';
+      }
+
       try {
         await sendToSheet({ task: t.id + ' — ' + t.title, name: who, answer: value, correct });
-        savedName(who);
-        answer.value = '';
-        if (!isFlag) {
-          status.className = 'note ok'; status.textContent = 'Відповідь надіслано.';
-        } else if (correct === 'так') {
-          solvedList(t.id); markSolved(true);
-          status.className = 'note ok'; status.textContent = 'Правильно! Результат записано.';
-        } else {
-          status.className = 'note err'; status.textContent = 'Невірний прапор. Спробуй ще.';
-        }
       } catch {
-        status.className = 'note err'; status.textContent = 'Не надіслано: перевірте інтернет і спробуйте ще раз.';
+        status.textContent += ' (результат не збережено на сервері — перевірте підключення)';
       }
       btn.disabled = false;
     }
