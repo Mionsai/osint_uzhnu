@@ -437,11 +437,6 @@ function h(tag, props = {}, ...kids) {
 const mount = (...n) => app.replaceChildren(...n.flat());
 const note = (t, k = '') => h('p', { class: 'note ' + k }, t);
 
-function savedName(v) {
-  try { if (v !== undefined) localStorage.setItem('studentName', v); return localStorage.getItem('studentName') || ''; }
-  catch { return ''; }
-}
-
 // Список: тільки назви + короткий уривок, клік відкриває окрему сторінку
 function viewMaterials() {
   mount(h('h1', {}, 'Матеріали'),
@@ -533,7 +528,6 @@ function sendToSheet(data) {
 
 function taskCard(t) {
   const isFlag = !!t.hash;
-  const name = h('input', { required: true, minlength: 2, maxlength: 80, placeholder: "Прізвище та ім'я", value: savedName() });
   const answer = isFlag
     ? h('input', { required: true, maxlength: 200, placeholder: 'FLAG{...}', autocomplete: 'off' })
     : h('textarea', { required: true, rows: 4, maxlength: 5000, placeholder: 'Відповідь або ключ рішення' });
@@ -553,13 +547,11 @@ function taskCard(t) {
     onsubmit: async e => {
       e.preventDefault();
       const value = answer.value.trim();
-      const who = name.value.trim();
       btn.disabled = true; status.className = 'note'; status.textContent = isFlag ? 'Перевіряю…' : 'Надсилаю…';
 
       let correct = '';
       if (isFlag) correct = [].concat(t.hash).includes(await sha256(value)) ? 'так' : 'ні';
 
-      savedName(who);
       answer.value = '';
 
       if (!isFlag) {
@@ -572,13 +564,13 @@ function taskCard(t) {
       }
 
       try {
-        await sendToSheet({ task: t.id + ' — ' + t.title, name: who, answer: value, correct });
+        await sendToSheet({ task: t.id + ' — ' + t.title, answer: value, correct });
       } catch {
         status.textContent += ' (результат не збережено на сервері — перевірте підключення)';
       }
       btn.disabled = false;
     }
-  }, h('label', {}, "Ваше ім'я", name), h('label', {}, isFlag ? 'Прапор' : 'Відповідь', answer), btn, status);
+  }, h('label', {}, isFlag ? 'Прапор' : 'Відповідь', answer), btn, status);
 
   card.append(...[
     badge,
